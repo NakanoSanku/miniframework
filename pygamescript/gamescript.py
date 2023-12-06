@@ -1,8 +1,10 @@
 from minicv import Images
 from minidevice import ADBtouch, DroidCast, MiniDevice, Minicap, Minitouch
-from template import Template, ImageTemplate
+from pygamescript.template import Template, ImageTemplate
 from typing import Optional
-
+import numpy as np
+from pygamescript.algo import CurveGenerate,RandomPointGenerate
+import random
 
 class GameScript(MiniDevice):
     def __init__(self, serial=None, capMethod: ADBtouch | Minicap | DroidCast = None,
@@ -52,3 +54,31 @@ class GameScript(MiniDevice):
             operateParams.setdefault("result", result)
             operate(**operateParams)
         return result
+
+
+    def rangeRandomClick(self,result:tuple|list,duration = None,randomPointGenerateAlgo=RandomPointGenerate.normalDistribution):
+        if len(result) == 2:
+            x,y =result
+        elif len(result) == 4:
+            x,y=randomPointGenerateAlgo(result)
+        else:
+            raise ValueError(f"{result} is No Correct Value")
+        if duration is None:
+            randomI = round(np.random.normal(0, 30))
+            duration = random.randint(200,350) if randomI > 80 else  random.randint(80,120)
+        self.click(x,y,duration)
+
+    def curveSwipe(self,startX, startY, endX, endY, duration,curveGenerateAlgo=CurveGenerate.BezierCurve):
+        points = curveGenerateAlgo(startX, startY, endX, endY, duration)
+        self.swipe(points,duration)
+        
+
+    def findAndClick(self,template: Template,result:tuple|list = None,duration = None,randomPointGenerateAlgo=None):
+        clickParams = {}
+        if result:
+            clickParams["result"] = result
+        if randomPointGenerateAlgo:
+            clickParams["randomPointGenerateAlgo"] = randomPointGenerateAlgo
+        if duration:
+            clickParams["duration"] = duration
+        return self.findAndOperate(template,self.rangeRandomClick,clickParams)
