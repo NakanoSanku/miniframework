@@ -1,0 +1,2 @@
+minicv~=1.0.0
+minidevice~=2.3.4
