@@ -1,3 +1,4 @@
+from loguru import logger
 from minicv import Images
 from minidevice import ADBtouch, DroidCast, MiniDevice, Minicap, Minitouch
 from pygamescript.template import Template, ImageTemplate
@@ -10,6 +11,7 @@ class GameScript(MiniDevice):
     def __init__(self, serial=None, capMethod: ADBtouch | Minicap | DroidCast = None,
                  touchMethod: ADBtouch | Minitouch = None, screenshotTimeout=30) -> None:
         super().__init__(serial, capMethod, touchMethod, screenshotTimeout)
+        self.__current_screenshot = self.screenshot()
 
     def screenshot(self):
         """get cv2.Mat format image"""
@@ -25,19 +27,23 @@ class GameScript(MiniDevice):
 
         Args:
             template (Template): 模板 ImageTemplate ColorsTemplate OcrTemplate
-            isColor  (bool): 是否找色 Default to False.
-            colorThreshold (int): 颜色相似度 0~255 Default to 4.
+            isColor  (bool): 是否找色 Default to False. 仅在ImageTemplate中有效
+            colorThreshold (int): 颜色相似度 0~255 Default to 4. 仅在ImageTemplate中有效
 
         Returns:
             result: 是否匹配到
         """
         screenshot = self.screenshot()
         if isinstance(template, ImageTemplate):
-            return template.match_color(screenshot, colorThreshold) if isColor else template.match(screenshot)
+            result = template.match_color(screenshot, colorThreshold) if isColor else template.match(screenshot)
         else:
-            return template.match(screenshot)
-
-    def findAndOperate(self, template: Template, operate, operateParams: Optional[dict] = None):
+            result = template.match(screenshot)
+            
+        if result:
+            logger.debug(f"success find {template}")
+        return result
+    
+    def findAndOperate(self, template: Template, operate, operateParams: Optional[dict] = None, isColor: bool = False, colorThreshold: int = 4):
         """find template on the device's screen ,operate the device
 
         Args:
@@ -48,7 +54,7 @@ class GameScript(MiniDevice):
         Returns:
             result: 是否找到模板 会传递给operate函数
         """
-        result = self.find(template)
+        result = self.find(template, isColor, colorThreshold)
         if result:
             operateParams = operateParams or {}
             operateParams.setdefault("result", result)
@@ -73,7 +79,7 @@ class GameScript(MiniDevice):
         self.swipe(points,duration)
         
 
-    def findAndClick(self,template: Template,result:tuple|list = None,duration = None,randomPointGenerateAlgo=None):
+    def findAndClick(self,template: Template,result:tuple|list = None,duration = None,randomPointGenerateAlgo=None, isColor: bool = False, colorThreshold: int = 4):
         clickParams = {}
         if result:
             clickParams["result"] = result
@@ -81,4 +87,4 @@ class GameScript(MiniDevice):
             clickParams["randomPointGenerateAlgo"] = randomPointGenerateAlgo
         if duration:
             clickParams["duration"] = duration
-        return self.findAndOperate(template,self.rangeRandomClick,clickParams)
+        return self.findAndOperate(template,self.rangeRandomClick,clickParams, isColor=isColor, colorThreshold=colorThreshold)

@@ -1,0 +1,4 @@
+build/*
+dist/*
+pygamescript.egg-info/*
+

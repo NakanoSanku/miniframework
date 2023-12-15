@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from abc import ABC, abstractmethod
+from loguru import logger
+
 
 from minicv import Images
 
@@ -15,6 +17,9 @@ class Template(ABC):
     def match(self, image):
         """匹配方法"""
 
+    @abstractmethod
+    def __str__(self) -> str:
+        """模板描述"""
 
 class ImageTemplate(Template):
     def __init__(self, templatePath: str, describe: str = None, threshold: float = 0.9, region: list = None,
@@ -41,18 +46,22 @@ class ImageTemplate(Template):
     def match(self, image):
         """灰度匹配"""
         return Images.findImage(image, self.template, self.threshold, self.region, self.level)
+   
 
     def match_color(self, image, colorThreshold: int = 4):
         """原图匹配"""
         result = self.match(image)
         if result:
             color = self.template.pixel(0, 0) if self.readImageFlag else Images.getPixel(self.template, 0, 0)
-            region = [result[0], result[1], 10, 10]
+            xMin,yMin =result[0:2]
+            region = [xMin, yMin, xMin+10, yMin+10]
             colorResult = Images.findColor(image, color, region, colorThreshold)
             if not colorResult:
                 result = None
         return result
 
+    def __str__(self) -> str:
+        return self.describe
 
 class ColorsTemplate(Template):
     def __init__(self, firstColor: str, colors: list, describe: str = None, region: list | None = None,
@@ -70,17 +79,11 @@ class ColorsTemplate(Template):
         self.colors = colors
         self.region = region
         self.threshold = threshold
+        self.describe = describe or firstColor
 
     def match(self, image):
         return Images.findMultiColors(image, self.firstColor, self.colors, self.region, self.threshold)
 
+    def __str__(self) -> str:
+        return self.describe
 
-class OcrTemplate(Template, ABC):
-    # TODO:ocr模板预留(未实现)
-    @abstractmethod
-    def __init__(self, text, region=None) -> None:
-        pass
-
-    @abstractmethod
-    def match(self, image):
-        pass
