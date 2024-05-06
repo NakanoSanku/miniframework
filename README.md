@@ -2,7 +2,7 @@
 base `minidevice` and `minicv`
 - Template
     - ImageTemplate
-    - ColorsTemplate
+    - MultiColorsTemplate
 - GameScript
     - screenshot -> cv2.Mat
     - saveScreenshot(path) 
