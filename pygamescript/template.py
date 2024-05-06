@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from abc import ABC, abstractmethod
-from loguru import logger
-
 
 from minicv import Images
 
@@ -21,9 +19,10 @@ class Template(ABC):
     def __str__(self) -> str:
         """模板描述"""
 
+
 class ImageTemplate(Template):
     def __init__(self, templatePath: str, describe: str = None, threshold: float = 0.9, region: list = None,
-                 clickRegion: list = None, level: int = None, readImageFlag: int = 0) -> None:
+                 level: int = None) -> None:
         """找图模板
 
         Args:
@@ -31,39 +30,35 @@ class ImageTemplate(Template):
             describe (str, optional): 描述信息. Defaults to None.
             threshold (float, optional): 图片相似度. Defaults to 0.9.
             region (list, optional): 找图范围. Defaults to None.
-            clickRegion (list, optional): 点击范围. Defaults to region.
             level (int, optional): 图像金字塔等阶. Defaults to None.
         """
         self.templatePath = templatePath
         self.describe = describe or templatePath.split("/")[-1].split("\\")[-1].split('.')[0]
-        self.readImageFlag = readImageFlag
-        self.template = Images.read(templatePath, readImageFlag)
+        self.template = Images.read(templatePath, 0)
         self.threshold = threshold
         self.region = region
         self.level = level
-        self.clickRegion = self.region or clickRegion
 
     def match(self, image):
         """灰度匹配"""
         return Images.findImage(image, self.template, self.threshold, self.region, self.level)
-   
 
     def match_color(self, image, colorThreshold: int = 4):
         """原图匹配"""
         result = self.match(image)
         if result:
-            color = self.template.pixel(0, 0) if self.readImageFlag else Images.getPixel(self.template, 0, 0)
-            xMin,yMin =result[0:2]
-            region = [xMin, yMin, xMin+10, yMin+10]
-            colorResult = Images.findColor(image, color, region, colorThreshold)
-            if not colorResult:
+            color = Images.getPixel(self.template, 0, 0)
+            x_min, y_min = result[0:2]
+            region = [x_min, y_min, x_min + 10, y_min + 10]
+            if not Images.findColor(image, color, region, colorThreshold):
                 result = None
         return result
 
     def __str__(self) -> str:
         return self.describe
 
-class ColorsTemplate(Template):
+
+class MultiColorsTemplate(Template):
     def __init__(self, firstColor: str, colors: list, describe: str = None, region: list | None = None,
                  threshold: int = 4) -> None:
         """多点找色模板
@@ -86,4 +81,3 @@ class ColorsTemplate(Template):
 
     def __str__(self) -> str:
         return self.describe
-
