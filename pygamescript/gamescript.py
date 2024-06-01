@@ -2,7 +2,6 @@ import functools
 import random
 import time
 
-import cv2
 import numpy as np
 from loguru import logger
 from minicv import Images
@@ -41,7 +40,7 @@ class GameScript:
 
     @_performance_test
     def screenshot(self):
-        """获取设备的屏幕截图，返回OpenCV格式的JPEG图片"""
+        """获取设备的屏幕截图，返回OpenCV格式的图片"""
         raw = self.__device.screenshot_raw()
         data = Images.bytes2opencv(raw)
         return data
@@ -49,8 +48,7 @@ class GameScript:
     @_performance_test
     def save_screenshot(self, path: str = './screenshot.png'):
         """将屏幕截图保存到指定路径"""
-        with open(path, 'wb') as file:
-            file.write(self.__device.screenshot_raw())
+        self.__device.save_screenshot(path)
 
     @_performance_test
     def find(self, template: Template):
@@ -65,11 +63,13 @@ class GameScript:
         screenshot = self.screenshot()
         result = template.match(screenshot)
         logger.debug("Find Template:{} Result: {}".format(template, result))
-        if self.debug:
-            if result:
-                min_x, min_y, max_x, max_y = result
-                screenshot = cv2.rectangle(screenshot, (min_x, min_y), (max_x, max_y), (0, 0, 255), 2)
-            self.debug_result_list.append(screenshot)
+        if self.debug and result:
+            self.debug_result_list.append(
+                {
+                    "template": template,
+                    "result": result,
+                    "screenshot": screenshot
+                })
         return result
 
     @_performance_test
