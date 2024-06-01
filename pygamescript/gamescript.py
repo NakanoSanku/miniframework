@@ -31,12 +31,13 @@ def _performance_test(func):
 
 class GameScript:
     debug = False
-    debug_result_list = []
+
 
     def __init__(self, serial=None, screenshot_method=None, touch_method=None, screenshot_timeout=30, debug=False):
         self.__device = MiniDevice(serial, screenshot_method, touch_method, screenshot_timeout)
         self.__current_screenshot = self.screenshot()
         self.debug = debug
+        self.debug_result_list = []
 
     @_performance_test
     def screenshot(self):
