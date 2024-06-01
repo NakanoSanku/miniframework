@@ -1,8 +1,7 @@
 from pygamescript import GameScript, ImageTemplate, MultiColorsTemplate
 from minidevice import DroidCast, MaaTouch, ADBCap, MiniCap
 
-d = GameScript(serial="emulator-5554", capMethod=MiniCap
-               , touchMethod=None)
+d = GameScript(serial="127.0.0.1:16384", debug=debug)
 #
 # d.screenshot()
 # d.click(100,100,5000)
@@ -12,5 +11,5 @@ test = MultiColorsTemplate("#e0bb75",
                             [352, 7, "#e03f13"], [351, 19, "#181e12"], [353, -2, "#f9802d"]],threshold=26
                            )
 ts = d.screenshot()
-# d.saveScreenshot()
-print(test.match(ts))
+d.saveScreenshot()
+# print(test.match(ts))

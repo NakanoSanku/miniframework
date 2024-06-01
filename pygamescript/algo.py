@@ -1,24 +1,26 @@
-import numpy as np
 import random
+
+import numpy as np
+
 
 class CurveGenerate:
 
     @staticmethod
-    def BezierCurve(startX, startY, endX, endY, duration):
+    def bezier_curve(startX, startY, endX, endY, duration):
         def bezier(screenPoint, offset):
-                p0, p1, p2, p3 = screenPoint
-                cx = 3 * (p1['x'] - p0['x'])
-                bx = 3 * (p2['x'] - p1['x']) - cx
-                ax = p3['x'] - p0['x'] - cx - bx
-                cy = 3 * (p1['y'] - p0['y'])
-                by = 3 * (p2['y'] - p1['y']) - cy
-                ay = p3['y'] - p0['y'] - cy - by
-                t = np.arange(0, 1, 0.08)  # 使用 numpy 的 arange 函数生成浮点数步长的范围
-                tSquared = t * t
-                tCubed = tSquared * t
-                x = ax * tCubed + bx * tSquared + cx * t + p0['x']
-                y = ay * tCubed + by * tSquared + cy * t + p0['y']
-                return [(int(px), int(py)) for px, py in zip(x, y)]
+            p0, p1, p2, p3 = screenPoint
+            cx = 3 * (p1['x'] - p0['x'])
+            bx = 3 * (p2['x'] - p1['x']) - cx
+            ax = p3['x'] - p0['x'] - cx - bx
+            cy = 3 * (p1['y'] - p0['y'])
+            by = 3 * (p2['y'] - p1['y']) - cy
+            ay = p3['y'] - p0['y'] - cy - by
+            t = np.arange(0, 1, 0.08)  # 使用 numpy 的 arange 函数生成浮点数步长的范围
+            tSquared = t * t
+            tCubed = tSquared * t
+            x = ax * tCubed + bx * tSquared + cx * t + p0['x']
+            y = ay * tCubed + by * tSquared + cy * t + p0['y']
+            return [(int(px), int(py)) for px, py in zip(x, y)]
 
         def smlMove(qx, qy, zx, zy):
             slidingPath = []
@@ -37,7 +39,7 @@ class CurveGenerate:
 class RandomPointGenerate:
 
     @staticmethod
-    def normalDistribution(region):
+    def normal_distribution(region):
         """基于正太分布生成随机点
 
         Args:
