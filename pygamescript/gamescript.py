@@ -159,11 +159,11 @@ class GameScript:
         return self.find_and_operate(template, self.range_random_click, clickParams)
 
     @_performance_test
-    def click(self, x, y, duration):
+    def click(self, x:int, y:int, duration:int=100):
         self.__device.click(x, y, duration)
 
     @_performance_test
-    def swipe(self, points, duration):
+    def swipe(self, points:list[tuple[int]], duration:int=300):
         self.__device.swipe(points, duration)
 
 
