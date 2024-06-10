@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum, auto
+from uuid import UUID, uuid4
 
 
 class TaskStatus(Enum):
@@ -10,6 +11,13 @@ class TaskStatus(Enum):
 
 
 class Task(ABC):
+    def __init__(self):
+        self._uuid = uuid4()
+
+    @property
+    def uuid(self) -> str:
+        return str(self._uuid)
+
     @property
     @abstractmethod
     def name(self) -> str:
