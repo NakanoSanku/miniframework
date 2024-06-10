@@ -2,6 +2,7 @@ import threading
 import time
 from enum import Enum, auto
 from typing import Optional
+
 from loguru import logger
 
 from pygamescript.task_queue import TaskQueue

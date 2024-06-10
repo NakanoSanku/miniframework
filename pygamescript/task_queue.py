@@ -1,5 +1,6 @@
-from typing import List, Optional
 from threading import Lock
+from typing import List, Optional
+
 from pygamescript.task import Task, TaskStatus
 
 

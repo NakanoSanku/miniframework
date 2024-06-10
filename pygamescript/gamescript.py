@@ -32,7 +32,6 @@ def _performance_test(func):
 class GameScript:
     debug = False
 
-
     def __init__(self, serial=None, screenshot_method=None, touch_method=None, screenshot_timeout=30, debug=False):
         self.__device = MiniDevice(serial, screenshot_method, touch_method, screenshot_timeout)
         self.__current_screenshot = self.screenshot()
@@ -159,11 +158,11 @@ class GameScript:
         return self.find_and_operate(template, self.range_random_click, clickParams)
 
     @_performance_test
-    def click(self, x:int, y:int, duration:int=100):
+    def click(self, x: int, y: int, duration: int = 100):
         self.__device.click(x, y, duration)
 
     @_performance_test
-    def swipe(self, points:list[tuple[int]], duration:int=300):
+    def swipe(self, points: list[tuple[int]], duration: int = 300):
         self.__device.swipe(points, duration)
 
 
