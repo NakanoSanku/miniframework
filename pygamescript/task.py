@@ -82,7 +82,15 @@ class TaskProxy(Task):
     def reset(self):
         """重置任务状态"""
         self._task.reset()
-        self._status = TaskStatus.PENDING
+        self.reset_proxy_task()
+
+    @abstractmethod
+    def reset_proxy_task(self):
+        """
+        重置代理任务状态
+        将self.proxy_task_status设置成TaskStatus.PENDING
+        """
+        pass
 
     @abstractmethod
     def proxy_task(self):
@@ -115,6 +123,14 @@ class BeforeTaskProxy(TaskProxy):
         else:
             self._task.execute()
 
+    @abstractmethod
+    def reset_proxy_task(self):
+        """
+        重置代理任务状态
+        将self.proxy_task_status设置成TaskStatus.PENDING
+        """
+        pass
+
 
 class AfterTaskProxy(TaskProxy):
     """后置任务代理抽象类"""
@@ -138,8 +154,16 @@ class AfterTaskProxy(TaskProxy):
         else:
             self._task.execute()
 
+    @abstractmethod
+    def reset_proxy_task(self):
+        """
+        重置代理任务状态
+        将self.proxy_task_status设置成TaskStatus.PENDING
+        """
+        pass
 
-class TaskExtraTaskProxy(TaskProxy):
+
+class ExtraTaskProxy(TaskProxy):
     """任务增强代理抽象类"""
 
     def __init__(self, task: Task):
