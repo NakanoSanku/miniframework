@@ -85,7 +85,7 @@ class TaskProxy(Task):
         self._status = TaskStatus.PENDING
 
     @abstractmethod
-    def task(self):
+    def proxy_task(self):
         pass
 
     @abstractmethod
@@ -93,14 +93,14 @@ class TaskProxy(Task):
         pass
 
 
-class BeforeTask(TaskProxy):
+class BeforeTaskProxy(TaskProxy):
     """前置任务代理抽象类"""
 
     def __init__(self, task: Task):
         super().__init__(task)
 
     @abstractmethod
-    def task(self):
+    def proxy_task(self):
         """
         前置任务逻辑实现
         任务完成后必须将self.proxy_task_status设置成TaskStatus.COMPLETED
@@ -111,19 +111,19 @@ class BeforeTask(TaskProxy):
         """执行任务"""
         if self._status != TaskStatus.COMPLETED:
             self.proxy_task_status = TaskStatus.RUNNING
-            self.task()
+            self.proxy_task()
         else:
             self._task.execute()
 
 
-class AfterTask(TaskProxy):
+class AfterTaskProxy(TaskProxy):
     """后置任务代理抽象类"""
 
     def __init__(self, task: Task):
         super().__init__(task)
 
     @abstractmethod
-    def task(self):
+    def proxy_task(self):
         """
         后置任务逻辑实现
         任务完成后必须将self.proxy_task_status设置成TaskStatus.COMPLETED
@@ -134,8 +134,22 @@ class AfterTask(TaskProxy):
         """执行任务"""
         if self.status == TaskStatus.COMPLETED:
             self.proxy_task_status = TaskStatus.RUNNING
-            self.task()
+            self.proxy_task()
         else:
             self._task.execute()
 
 
+class TaskExtraTaskProxy(TaskProxy):
+    """任务增强代理抽象类"""
+
+    def __init__(self, task: Task):
+        super().__init__(task)
+
+    @abstractmethod
+    def proxy_task(self):
+        """守护任务"""
+        pass
+
+    def execute(self):
+        self.proxy_task()
+        self._task.execute()
