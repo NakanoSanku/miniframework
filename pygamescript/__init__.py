@@ -3,3 +3,4 @@ from pygamescript.template import Template, ImageTemplate, MultiColorsTemplate, 
 from pygamescript.algo import CurveGenerate, RandomPointGenerate
 from pygamescript.task import Task, TaskStatus
 from pygamescript.task_queue import TaskQueue
+from pygamescript.task_scheduler import TaskScheduler, TaskSchedulerStatus
