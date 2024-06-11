@@ -49,12 +49,10 @@ class TaskScheduler:
             with self._pause_condition:
                 while self.status == TaskSchedulerStatus.PAUSED:
                     self._pause_condition.wait()
-
             next_task = self._task_queue.next_task if self._task_queue else None
             if next_task:
                 logger.debug(f"Executing task: {next_task}")
                 next_task.execute()
-
             time.sleep(self._sleep_time)
 
     def start(self):
@@ -63,11 +61,9 @@ class TaskScheduler:
             raise ValueError("Task queue must be set before starting the scheduler.")
         if self._status != TaskSchedulerStatus.PENDING:
             raise RuntimeError("Scheduler is already running or has been stopped.")
-
         self._status = TaskSchedulerStatus.RUNNING
         self._work_thread = threading.Thread(target=self._run)
         self._work_thread.start()
-
         logger.debug("TaskScheduler started.")
 
     def stop(self):
