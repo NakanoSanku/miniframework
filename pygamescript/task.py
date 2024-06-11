@@ -51,129 +51,103 @@ class Task(ABC):
 
 
 class TaskProxy(Task):
-    """任务代理抽象类"""
-
     def __init__(self, task: Task):
         super().__init__()
         self._task = task
-        self._status = TaskStatus.PENDING  # 代理任务的状态
+        self._status: TaskStatus = TaskStatus.PENDING
 
     @property
     def name(self) -> str:
-        """任务名称"""
         return self._task.name
 
     @property
-    def proxy_task_status(self) -> TaskStatus:
-        return self._status
-
-    @proxy_task_status.setter
-    def proxy_task_status(self, status: TaskStatus):
-        self._status = status
+    def status(self) -> TaskStatus:
+        if self.proxy_status == TaskStatus.PENDING:
+            return TaskStatus.PENDING
+        if self.proxy_status == TaskStatus.COMPLETED and self._task.status == TaskStatus.COMPLETED:
+            return TaskStatus.COMPLETED
+        return TaskStatus.RUNNING
 
     @property
-    def status(self) -> TaskStatus:
-        return self._task.status
+    def proxy_status(self) -> TaskStatus:
+        return self._status
+
+    @proxy_status.setter
+    def proxy_status(self, status: TaskStatus):
+        self._status = status
 
     def __str__(self) -> str:
-        """任务描述"""
-        return str(self._task)
+        return self._task.__str__()
 
     def reset(self):
-        """重置任务状态"""
-        self._task.reset()
         self.reset_proxy_task()
+        self._task.reset()
 
     @abstractmethod
-    def reset_proxy_task(self):
-        """
-        重置代理任务状态
-        将self.proxy_task_status设置成TaskStatus.PENDING
-        """
-        pass
-
-    @abstractmethod
-    def proxy_task(self):
+    def task(self):
         pass
 
     @abstractmethod
     def execute(self):
+        pass
+
+    @abstractmethod
+    def reset_proxy_task(self):
         pass
 
 
 class BeforeTaskProxy(TaskProxy):
-    """前置任务代理抽象类"""
-
     def __init__(self, task: Task):
         super().__init__(task)
-
-    @abstractmethod
-    def proxy_task(self):
-        """
-        前置任务逻辑实现
-        任务完成后必须将self.proxy_task_status设置成TaskStatus.COMPLETED
-        """
-        pass
+        self._task = task
 
     def execute(self):
-        """执行任务"""
-        if self._status != TaskStatus.COMPLETED:
-            self.proxy_task_status = TaskStatus.RUNNING
-            self.proxy_task()
+        if self.proxy_status != TaskStatus.COMPLETED:
+            self.task()
         else:
             self._task.execute()
 
     @abstractmethod
+    def task(self):
+        """
+        前置任务
+        完成后self._status = TaskStatus.COMPLETED
+        """
+        pass
+
+    @abstractmethod
     def reset_proxy_task(self):
         """
-        重置代理任务状态
-        将self.proxy_task_status设置成TaskStatus.PENDING
+        重置前置任务
+        需将self._status = TaskStatus.PENDING
         """
         pass
 
 
 class AfterTaskProxy(TaskProxy):
-    """后置任务代理抽象类"""
-
     def __init__(self, task: Task):
         super().__init__(task)
-
-    @abstractmethod
-    def proxy_task(self):
-        """
-        后置任务逻辑实现
-        任务完成后必须将self.proxy_task_status设置成TaskStatus.COMPLETED
-        """
-        pass
+        self._task = task
 
     def execute(self):
-        """执行任务"""
-        if self.status == TaskStatus.COMPLETED:
-            self.proxy_task_status = TaskStatus.RUNNING
-            self.proxy_task()
+        if self._task.status == TaskStatus.COMPLETED:
+            self.task()
         else:
             self._task.execute()
 
     @abstractmethod
-    def reset_proxy_task(self):
+    def task(self):
         """
-        重置代理任务状态
-        将self.proxy_task_status设置成TaskStatus.PENDING
+        后置任务
+        完成后self._status = TaskStatus.COMPLETED
         """
         pass
-
-
-class ExtraTaskProxy(TaskProxy):
-    """任务增强代理抽象类"""
-
-    def __init__(self, task: Task):
-        super().__init__(task)
 
     @abstractmethod
-    def proxy_task(self):
-        """守护任务"""
+    def reset_proxy_task(self):
+        """
+        重置后置任务
+        需将self._status = TaskStatus.PENDING
+        """
         pass
 
-    def execute(self):
-        self.proxy_task()
-        self._task.execute()
