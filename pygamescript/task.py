@@ -62,11 +62,11 @@ class TaskProxy(Task):
 
     @property
     def status(self) -> TaskStatus:
-        if self.proxy_status == TaskStatus.PENDING:
-            return TaskStatus.PENDING
+        if self.proxy_status == TaskStatus.RUNNING or self._task.status == TaskStatus.RUNNING:
+            return TaskStatus.RUNNING
         if self.proxy_status == TaskStatus.COMPLETED and self._task.status == TaskStatus.COMPLETED:
             return TaskStatus.COMPLETED
-        return TaskStatus.RUNNING
+        return TaskStatus.PENDING
 
     @property
     def proxy_status(self) -> TaskStatus:
