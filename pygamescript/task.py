@@ -17,9 +17,9 @@ class Task(ABC):
     def uuid(self) -> str:
         return str(self._uuid)
 
-    @property
+    @staticmethod
     @abstractmethod
-    def name(self) -> str:
+    def name() -> str:
         """任务名称"""
         pass
 
@@ -57,10 +57,6 @@ class TaskProxy(Task):
         self._status: TaskStatus = TaskStatus.PENDING
 
     @property
-    def name(self) -> str:
-        return self._task.name
-
-    @property
     def status(self) -> TaskStatus:
         if self.proxy_status == TaskStatus.RUNNING or self._task.status == TaskStatus.RUNNING:
             return TaskStatus.RUNNING
@@ -82,6 +78,11 @@ class TaskProxy(Task):
     def reset(self):
         self.reset_proxy_task()
         self._task.reset()
+
+    @staticmethod
+    @abstractmethod
+    def name() -> str:
+        pass
 
     @abstractmethod
     def task(self):
@@ -106,6 +107,11 @@ class BeforeTaskProxy(TaskProxy):
             self.task()
         else:
             self._task.execute()
+
+    @staticmethod
+    @abstractmethod
+    def name() -> str:
+        pass
 
     @abstractmethod
     def task(self):
@@ -135,6 +141,11 @@ class AfterTaskProxy(TaskProxy):
         else:
             self._task.execute()
 
+    @staticmethod
+    @abstractmethod
+    def name() -> str:
+        pass
+
     @abstractmethod
     def task(self):
         """
@@ -150,4 +161,3 @@ class AfterTaskProxy(TaskProxy):
         需将self._status = TaskStatus.PENDING
         """
         pass
-
