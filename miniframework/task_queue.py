@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import List, Optional, Tuple
 
-from pygamescript.task import Task, TaskStatus, TaskProxy, BeforeTaskProxy
+from miniframework.task import Task, TaskStatus, TaskProxy, BeforeTaskProxy
 
 
 class TaskQueue:

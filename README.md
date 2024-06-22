@@ -7,10 +7,10 @@ pygamescript是一个用于自动化游戏的Python库，它提供了多种功�
 pip install minicv mindeivce 
 ```
 ```bash
-pip install pygamescript
+pip install miniframework
 ```
 ## 3. 类和方法
-### 3.1 GameScript类
+### 3.1  Instance类
 - **属性**:
   - `debug`: 布尔值，用于控制是否打印调试信息。
   - `debug_result_list`: 列表，用于存储调试结果。
@@ -26,7 +26,7 @@ pip install pygamescript
     - `click(self, x, y, duration)`: 执行点击操作。
     - `swipe(self, points, duration)`: 执行滑动操作。
     - `save_screenshot(self, path: str = './screenshot.png')`: 将屏幕截图保存到指定路径。
-  - **基于[防封策略](pygamescript/algo.py)的操作方法**
+  - **基于[防封策略](miniframework/algo.py)的操作方法**
     - `range_random_click(self, result: tuple | list, duration=None, random_point_generate_algo=RandomPointGenerate.normal_distribution)`: 在指定范围内生成随机点击点并点击。
     - `curve_swipe(self, start_x, start_y, end_x, end_y, duration, curve_generate_algo=CurveGenerate.bezier_curve)`: 执行曲线滑动操作。
   - **基于[Template](#32-template类)的方法**
@@ -45,10 +45,12 @@ pip install pygamescript
 
 ## 4. 示例
 以下是一个简单的示例，展示了如何使用GameScript库进行屏幕截图和模板匹配：
+
 ```python
-from minidevice import DroidCast, MiniTouch 
-from pygamescript.template import ImageTemplate
-from pygamescript.GameScript import GameScript
+from minidevice import DroidCast, MiniTouch
+from miniframework.template import ImageTemplate
+from miniframework.GameScript import GameScript
+
 test = GameScript(serial="127.0.0.1:16384", screenshot_method=DroidCast, touch_method=MiniTouch, debug=True)
 test.find_and_click(ImageTemplate(r"C:\Users\KateT\Desktop\QQ截图20240601161121.png", "测试"))
 time.sleep(0.8)

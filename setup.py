@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 with open('README.md', 'r', encoding='utf-8') as fp:
     long_description = fp.read()
 
-setup(name='pygamescript',
+setup(name='miniframework',
       version='0.0.1',
       description='Android Auto Pypi',
       author='KateTseng',

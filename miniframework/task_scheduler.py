@@ -5,7 +5,7 @@ from typing import Optional
 
 from loguru import logger
 
-from pygamescript.task_queue import TaskQueue
+from miniframework.task_queue import TaskQueue
 
 SLEEP_TIME = 0
 

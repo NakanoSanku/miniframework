@@ -1,6 +1,6 @@
 import time
 
-from pygamescript import TaskStatus, TaskScheduler, Task, TaskQueue
+from miniframework import TaskStatus, TaskScheduler, Task, TaskQueue
 
 
 class Task1(Task):

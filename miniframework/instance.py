@@ -7,8 +7,8 @@ from loguru import logger
 from minicv import Images
 from minidevice import MiniDevice
 
-from pygamescript.algo import RandomPointGenerate, CurveGenerate
-from pygamescript.template import Template
+from miniframework.algo import RandomPointGenerate, CurveGenerate
+from miniframework.template import Template
 
 
 def _performance_test(func):
@@ -29,7 +29,7 @@ def _performance_test(func):
     return wrapper
 
 
-class GameScript:
+class Instance:
     debug = False
 
     def __init__(self, serial=None, screenshot_method=None, touch_method=None, screenshot_timeout=30, debug=False):
@@ -168,9 +168,9 @@ class GameScript:
 
 if __name__ == '__main__':
     from minidevice import DroidCast, MiniTouch
-    from pygamescript.template import ImageTemplate, ImageColorTemplate
+    from miniframework.template import ImageTemplate, ImageColorTemplate
 
-    test = GameScript(serial="127.0.0.1:16384", screenshot_method=DroidCast, touch_method=MiniTouch, debug=True)
+    test = Instance(serial="127.0.0.1:16384", screenshot_method=DroidCast, touch_method=MiniTouch, debug=True)
     test.find_and_click(ImageTemplate(r"C:\Users\KateT\Desktop\QQ截图20240601161121.png", "测试"))
     time.sleep(0.8)
     test.find(ImageColorTemplate(r"C:\Users\KateT\Desktop\QQ截图20240601161121.png", "测试"))
