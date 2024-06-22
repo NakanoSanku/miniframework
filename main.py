@@ -1,15 +1,49 @@
-from pygamescript import GameScript, ImageTemplate, MultiColorsTemplate
-from minidevice import DroidCast, MaaTouch, ADBCap, MiniCap
+import time
 
-d = GameScript(serial="127.0.0.1:16384", debug=debug)
-#
-# d.screenshot()
-# d.click(100,100,5000)
+from pygamescript import TaskStatus, TaskScheduler, Task, TaskQueue
 
-test = MultiColorsTemplate("#e0bb75",
-                           [[18, 5, "#e2bf85"], [178, 6, "#744d3c"], [186, 3, "#e53b2a"], [336, 1, "#98412d"],
-                            [352, 7, "#e03f13"], [351, 19, "#181e12"], [353, -2, "#f9802d"]],threshold=26
-                           )
-ts = d.screenshot()
-d.saveScreenshot()
-# print(test.match(ts))
+
+class Task1(Task):
+    def __init__(self, message: str):
+        super().__init__()
+        self._status = TaskStatus.PENDING
+        self._message = message
+        self._times = 5
+
+    @staticmethod
+    def name() -> str:
+        return Task1.__name__
+
+    @property
+    def status(self) -> TaskStatus:
+        return self._status
+
+    def __str__(self) -> str:
+        return self._message
+
+    def task(self):
+        if self._status == TaskStatus.PENDING:
+            self._status = TaskStatus.RUNNING
+        self._times -= 1
+
+    def execute(self):
+        self.task()
+        if self._times == 0:
+            self._status = TaskStatus.COMPLETED
+
+    def reset(self):
+        pass
+
+
+task_queue = TaskQueue()  # 创建任务队列
+task_queue.add_task(Task1(message="任务1,优先度为1"), priority=1)  # 向任务队列添加任务
+task_scheduler = TaskScheduler(sleep_time=1000)  # 创建任务调度器
+task_scheduler.task_queue = task_queue  # 将任务队列推送到任务调度器
+
+task_scheduler.start()
+time.sleep(2)
+task_queue.add_task(Task1(message="任务2,优先度为2"), priority=2)  # 任务2
+time.sleep(12)
+task_queue.add_task(Task1(message="任务3,优先度为3"), priority=1)  # 任务2
+task_scheduler.stop()
+print(task_queue)

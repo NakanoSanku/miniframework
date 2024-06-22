@@ -10,6 +10,7 @@ class TaskStatus(Enum):
 
 
 class Task(ABC):
+
     def __init__(self):
         self._uuid = uuid4()
 
