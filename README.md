@@ -1,8 +1,8 @@
-# pygamescript 自动化脚本库
+# MiniFramework 自动化脚本库
 ## 1. 简介
-pygamescript是一个用于自动化游戏的Python库，它提供了多种功能，如屏幕截图、模板匹配、随机点击、曲线滑动等。这个库可以与minicv和minidevice库结合使用，以实现更复杂的自动化任务。
+miniframework是一个用于自动化游戏的Python库，它提供了多种功能，如屏幕截图、模板匹配、随机点击、曲线滑动等。这个库可以与minicv和minidevice库结合使用，以实现更复杂的自动化任务。
 ## 2. 安装
-首先需要安装[minicv](https://github.com/NakanoSanku/minicv)和[minidevice](https://github.com/NakanoSanku/minidevice)库,再安装[pygamescript]()：
+首先需要安装[minicv](https://github.com/NakanoSanku/minicv)和[minidevice](https://github.com/NakanoSanku/minidevice)库,再安装[miniframework]()：
 ```bash
 pip install minicv mindeivce 
 ```
